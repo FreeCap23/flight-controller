@@ -47,9 +47,7 @@ UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 int16_t x_raw, y_raw, z_raw;
 float x, y, z; // Expressed in degrees / second
-CircularBuffer *x_values;
-CircularBuffer *y_values;
-CircularBuffer *z_values;
+CircularBuffer *x_values, *y_values, *z_values;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
