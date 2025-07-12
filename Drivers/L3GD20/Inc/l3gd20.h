@@ -45,7 +45,7 @@ static struct {
  * This static structure holds the necessary SPI handle and chip select (CS) GPIO
  * information for communicating with the L3GD20 sensor.
  */
-static struct {
+static struct _cfg {
   /**
    * @brief Pointer to the SPI handle used for communication with the L3GD20.
    */
@@ -60,7 +60,7 @@ static struct {
    * @brief GPIO pin used as the chip select (CS) for SPI communication.
    */
   uint16_t CS_Pin;
-} _cfg;
+};
 
 /**
  * @brief Initializes the L3GD20 gyroscope interface.

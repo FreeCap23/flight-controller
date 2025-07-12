@@ -24,7 +24,7 @@ uint8_t L3GD20_ReadRegister(uint8_t reg) {
 
   // Enable SPI Communication by setting CS Low
   HAL_GPIO_WritePin(_cfg.CS_Port, _cfg.CS_Pin, GPIO_PIN_RESET);
-  HAL_SPI_TransmitReceive(_cfg, tx, rx, 2, 50); // Send and receive 2 bytes, timeout 50ms.
+  HAL_SPI_TransmitReceive(_cfg.hspi, tx, rx, 2, 50); // Send and receive 2 bytes, timeout 50ms.
   // Disable SPI Communication by setting CS High
   HAL_GPIO_WritePin(_cfg.CS_Port, _cfg.CS_Pin, GPIO_PIN_SET);
 
@@ -39,7 +39,7 @@ void L3GD20_WriteRegister(uint8_t reg, uint8_t value) {
 
   // Enable SPI Communication by setting CS Low
   HAL_GPIO_WritePin(_cfg.CS_Port, _cfg.CS_Pin, GPIO_PIN_RESET);
-  HAL_SPI_Transmit(_cfg, tx, 2, 50); // Send 2 bytes, timeout 50ms.
+  HAL_SPI_Transmit(_cfg.hspi, tx, 2, 50); // Send 2 bytes, timeout 50ms.
   // Disable SPI Communication by setting CS High
   HAL_GPIO_WritePin(_cfg.CS_Port, _cfg.CS_Pin, GPIO_PIN_SET);
 }
