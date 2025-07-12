@@ -15,6 +15,7 @@
 #include "l3gd20.h"
 #include "circular_buffer.h"
 #include "utils.h"
+#include "pwm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -97,7 +98,9 @@ int main(void)
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   L3GD20_Init();
-  PWM_Initialize(&htim4, 255);
+  HAL_TIM_PWM_Start(&htim4, RED_LED_TIM_CHANNEL);
+  HAL_TIM_PWM_Start(&htim4, GREEN_LED_TIM_CHANNEL);
+  HAL_TIM_PWM_Start(&htim4, BLUE_LED_TIM_CHANNEL);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -137,9 +140,9 @@ int main(void)
       uint8_t green = map_range_float(0, 500, 0, 100, absf(y));
       uint8_t blue = map_range_float(0, 500, 0, 100, absf(z));
 
-      analogWritePercent(RED_LED_TIM_CHANNEL, red);
-      analogWritePercent(GREEN_LED_TIM_CHANNEL, green);
-      analogWritePercent(BLUE_LED_TIM_CHANNEL, blue);
+      analogWritePercent(&htim4, RED_LED_TIM_CHANNEL, red);
+      analogWritePercent(&htim4, GREEN_LED_TIM_CHANNEL, green);
+      analogWritePercent(&htim4, BLUE_LED_TIM_CHANNEL, blue);
     }
     /* USER CODE END WHILE */
 
