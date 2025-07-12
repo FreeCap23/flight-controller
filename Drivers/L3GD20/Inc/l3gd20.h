@@ -25,6 +25,75 @@
  extern "C" {
 #endif
 
+#include "stm32f4xx_hal.h"
+
+/// This holds the configuration for the L3GD20.
+static struct {
+  /// A pointer to the SPI Handle needed for communication.
+  SPI_HandleTypeDef *hspi;
+  GPIO_TypeDef *CS_Port;
+  uint16_t CS_Pin;
+} _cfg;
+
+/**
+ * Function prototypes
+ */
+
+/**
+ * @brief Configuration structure for the L3GD20 gyroscope.
+ *
+ * This static structure holds the necessary SPI handle and chip select (CS) GPIO
+ * information for communicating with the L3GD20 sensor.
+ */
+static struct {
+  /**
+   * @brief Pointer to the SPI handle used for communication with the L3GD20.
+   */
+  SPI_HandleTypeDef *hspi;
+
+  /**
+   * @brief GPIO port used for the chip select (CS) pin.
+   */
+  GPIO_TypeDef *CS_Port;
+
+  /**
+   * @brief GPIO pin used as the chip select (CS) for SPI communication.
+   */
+  uint16_t CS_Pin;
+} _cfg;
+
+/**
+ * @brief Initializes the L3GD20 gyroscope interface.
+ *
+ * Sets up the internal SPI handle and chip select pin configuration
+ * for communication with the L3GD20 sensor.
+ *
+ * @param handle  Pointer to the SPI handle to be used.
+ * @param CS_Port GPIO port for the chip select (CS) pin.
+ * @param CS_Pin  GPIO pin number for the chip select (CS) pin.
+ */
+void L3GD20_Initialize(SPI_HandleTypeDef *handle, GPIO_TypeDef *CS_Port, uint16_t CS_Pin);
+
+/**
+ * @brief Reads a single byte from a specified register on the L3GD20.
+ *
+ * Performs an SPI transaction to read from the sensor's internal register map.
+ *
+ * @param reg Register address to read from.
+ * @return uint8_t The value read from the register.
+ */
+uint8_t L3GD20_ReadRegister(uint8_t reg);
+
+/**
+ * @brief Writes a single byte to a specified register on the L3GD20.
+ *
+ * Performs an SPI transaction to write to the sensor's internal register map.
+ *
+ * @param reg   Register address to write to.
+ * @param value The value to write into the register.
+ */
+void L3GD20_WriteRegister(uint8_t reg, uint8_t value);
+
 /******************************************************************************/
 /*************************** START REGISTER MAPPING  **************************/
 /******************************************************************************/
