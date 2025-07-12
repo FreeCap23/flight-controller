@@ -50,6 +50,12 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define L3GD20_CS_Pin GPIO_PIN_3
 #define L3GD20_CS_GPIO_Port GPIOE
+#define GREEN_LED_Pin GPIO_PIN_12
+#define GREEN_LED_GPIO_Port GPIOD
+#define RED_LED_Pin GPIO_PIN_14
+#define RED_LED_GPIO_Port GPIOD
+#define BLUE_LED_Pin GPIO_PIN_15
+#define BLUE_LED_GPIO_Port GPIOD
 
 /* USER CODE BEGIN Private defines */
 
