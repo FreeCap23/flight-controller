@@ -1,3 +1,7 @@
 *.ld
 Debug/
 Backup/
+.project
+.cproject
+.mxproject
+.settings/
