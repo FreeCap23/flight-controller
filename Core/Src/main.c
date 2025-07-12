@@ -13,6 +13,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "l3gd20.h"
+#include "circular_buffer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -22,7 +23,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define MOVING_AVG_BUFFER_SIZE 100
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -36,6 +37,9 @@ SPI_HandleTypeDef hspi1;
 /* USER CODE BEGIN PV */
 int16_t x_raw, y_raw, z_raw;
 float x, y, z; // Expressed in degrees / second
+CircularBuffer *x_values;
+CircularBuffer *y_values;
+CircularBuffer *z_values;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -59,7 +63,9 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  x_values = circular_buffer_new(MOVING_AVG_BUFFER_SIZE);
+  y_values = circular_buffer_new(MOVING_AVG_BUFFER_SIZE);
+  z_values = circular_buffer_new(MOVING_AVG_BUFFER_SIZE);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -107,11 +113,24 @@ int main(void)
       x = (float)x_raw * sensitivity;
       y = (float)y_raw * sensitivity;
       z = (float)z_raw * sensitivity;
+
+      circular_buffer_update(x_values, x);
+      circular_buffer_update(y_values, y);
+      circular_buffer_update(z_values, z);
+
+      // Reassign x,y,z so we can see them in the live expressions tab of the debugger
+      x = circular_buffer_get_average(x_values);
+      y = circular_buffer_get_average(y_values);
+      z = circular_buffer_get_average(z_values);
     }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
+  // Cleanup
+  circular_buffer_free(x_values);
+  circular_buffer_free(y_values);
+  circular_buffer_free(z_values);
   /* USER CODE END 3 */
 }
 
