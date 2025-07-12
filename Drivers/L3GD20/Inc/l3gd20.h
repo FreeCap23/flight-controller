@@ -27,40 +27,9 @@
 
 #include "stm32f4xx_hal.h"
 
-/// This holds the configuration for the L3GD20.
-static struct {
-  /// A pointer to the SPI Handle needed for communication.
-  SPI_HandleTypeDef *hspi;
-  GPIO_TypeDef *CS_Port;
-  uint16_t CS_Pin;
-} _cfg;
-
 /**
  * Function prototypes
  */
-
-/**
- * @brief Configuration structure for the L3GD20 gyroscope.
- *
- * This static structure holds the necessary SPI handle and chip select (CS) GPIO
- * information for communicating with the L3GD20 sensor.
- */
-static struct _cfg {
-  /**
-   * @brief Pointer to the SPI handle used for communication with the L3GD20.
-   */
-  SPI_HandleTypeDef *hspi;
-
-  /**
-   * @brief GPIO port used for the chip select (CS) pin.
-   */
-  GPIO_TypeDef *CS_Port;
-
-  /**
-   * @brief GPIO pin used as the chip select (CS) for SPI communication.
-   */
-  uint16_t CS_Pin;
-};
 
 /**
  * @brief Initializes the L3GD20 gyroscope interface.
