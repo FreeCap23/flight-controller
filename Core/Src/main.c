@@ -34,7 +34,8 @@
 SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
-int16_t x, y, z;
+int16_t x_raw, y_raw, z_raw;
+float x, y, z; // Expressed in degrees / second
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,15 +93,20 @@ int main(void)
     if (L3GD20_ReadRegister(L3GD20_STATUS_REG_ADDR) & 8) {
       uint8_t x_low  = L3GD20_ReadRegister(L3GD20_OUT_X_L_ADDR);
       uint8_t x_high = L3GD20_ReadRegister(L3GD20_OUT_X_H_ADDR);
-      x = (int16_t)((x_high << 8) | x_low);
+      x_raw = (int16_t)((x_high << 8) | x_low);
 
       uint8_t y_low  = L3GD20_ReadRegister(L3GD20_OUT_Y_L_ADDR);
       uint8_t y_high = L3GD20_ReadRegister(L3GD20_OUT_Y_H_ADDR);
-      y = (int16_t)((y_high << 8) | y_low);
+      y_raw = (int16_t)((y_high << 8) | y_low);
 
       uint8_t z_low  = L3GD20_ReadRegister(L3GD20_OUT_Z_L_ADDR);
       uint8_t z_high = L3GD20_ReadRegister(L3GD20_OUT_Z_H_ADDR);
-      z = (int16_t)((z_high << 8) | z_low);
+      z_raw = (int16_t)((z_high << 8) | z_low);
+
+      float sensitivity = 0.0175; // For 500dps
+      x = (float)x_raw * sensitivity;
+      y = (float)y_raw * sensitivity;
+      z = (float)z_raw * sensitivity;
     }
     /* USER CODE END WHILE */
 
@@ -232,7 +238,22 @@ static void L3GD20_Init(void) {
       L3GD20_MODE_ACTIVE |
       L3GD20_AXES_ENABLE; // Enable all axes
   L3GD20_WriteRegister(L3GD20_CTRL_REG1_ADDR, tx);
+
+  // Configure High Pass filter
+  tx = 0;
+  tx = L3GD20_HPM_NORMAL_MODE |
+       L3GD20_HPFCF_1; // Cut-Off frequency configuration (27Hz for ODR 750Hz)
+  L3GD20_WriteRegister(L3GD20_CTRL_REG2_ADDR, tx);
+
+  // Use 500 dps
+  // Lower dps can read slow changes accurately, while higher dps can read
+  // fast changes without clipping.
+  L3GD20_WriteRegister(L3GD20_CTRL_REG4_ADDR, L3GD20_FULLSCALE_500);
+
+  // Enable High-Pass filter
+  L3GD20_WriteRegister(L3GD20_CTRL_REG5_ADDR, 16);
 }
+
 /* USER CODE END 4 */
 
 /**
