@@ -16,7 +16,7 @@
 #include "circular_buffer.h"
 #include "utils.h"
 #include "pwm.h"
-#include "string.h"
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +42,7 @@ SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim4;
 
-UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 int16_t x_raw, y_raw, z_raw;
@@ -55,7 +55,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM4_Init(void);
-static void MX_USART1_UART_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 static void L3GD20_Init(void);
 /* USER CODE END PFP */
@@ -99,7 +99,7 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_TIM4_Init();
-  MX_USART1_UART_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   L3GD20_Init();
   HAL_TIM_PWM_Start(&htim4, RED_LED_TIM_CHANNEL);
@@ -111,44 +111,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    HAL_UART_Transmit(&huart1, message, strlen(message) * sizeof(uint8_t), HAL_MAX_DELAY);
-    // If new XYZ data is available
-    if (L3GD20_ReadRegister(L3GD20_STATUS_REG_ADDR) & 8) {
-      uint8_t x_low  = L3GD20_ReadRegister(L3GD20_OUT_X_L_ADDR);
-      uint8_t x_high = L3GD20_ReadRegister(L3GD20_OUT_X_H_ADDR);
-      x_raw = (int16_t)((x_high << 8) | x_low);
-
-      uint8_t y_low  = L3GD20_ReadRegister(L3GD20_OUT_Y_L_ADDR);
-      uint8_t y_high = L3GD20_ReadRegister(L3GD20_OUT_Y_H_ADDR);
-      y_raw = (int16_t)((y_high << 8) | y_low);
-
-      uint8_t z_low  = L3GD20_ReadRegister(L3GD20_OUT_Z_L_ADDR);
-      uint8_t z_high = L3GD20_ReadRegister(L3GD20_OUT_Z_H_ADDR);
-      z_raw = (int16_t)((z_high << 8) | z_low);
-
-      float sensitivity = 0.0175; // For 500dps
-      x = (float)x_raw * sensitivity;
-      y = (float)y_raw * sensitivity;
-      z = (float)z_raw * sensitivity;
-
-      circular_buffer_update(x_values, x);
-      circular_buffer_update(y_values, y);
-      circular_buffer_update(z_values, z);
-
-      // Reassign x,y,z so we can see them in the live expressions tab of the debugger
-      x = circular_buffer_get_average(x_values);
-      y = circular_buffer_get_average(y_values);
-      z = circular_buffer_get_average(z_values);
-
-      // Map the x,y,z values from dps to PWM Duty Cycle
-      uint8_t red = map_range_float(0, 500, 0, 100, absf(x));
-      uint8_t green = map_range_float(0, 500, 0, 100, absf(y));
-      uint8_t blue = map_range_float(0, 500, 0, 100, absf(z));
-
-      analogWritePercent(&htim4, RED_LED_TIM_CHANNEL, red);
-      analogWritePercent(&htim4, GREEN_LED_TIM_CHANNEL, green);
-      analogWritePercent(&htim4, BLUE_LED_TIM_CHANNEL, blue);
-    }
+    HAL_UART_Transmit(&huart2, message, strlen(message), HAL_MAX_DELAY);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -312,35 +275,35 @@ static void MX_TIM4_Init(void)
 }
 
 /**
-  * @brief USART1 Initialization Function
+  * @brief USART2 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_USART1_UART_Init(void)
+static void MX_USART2_UART_Init(void)
 {
 
-  /* USER CODE BEGIN USART1_Init 0 */
+  /* USER CODE BEGIN USART2_Init 0 */
 
-  /* USER CODE END USART1_Init 0 */
+  /* USER CODE END USART2_Init 0 */
 
-  /* USER CODE BEGIN USART1_Init 1 */
+  /* USER CODE BEGIN USART2_Init 1 */
 
-  /* USER CODE END USART1_Init 1 */
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN USART1_Init 2 */
+  /* USER CODE BEGIN USART2_Init 2 */
 
-  /* USER CODE END USART1_Init 2 */
+  /* USER CODE END USART2_Init 2 */
 
 }
 
