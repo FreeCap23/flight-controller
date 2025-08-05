@@ -47,9 +47,6 @@ TIM_HandleTypeDef htim4;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-int16_t x_raw, y_raw, z_raw;
-float x, y, z; // Expressed in degrees / second
-CircularBuffer *x_values, *y_values, *z_values;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -61,6 +58,9 @@ static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 static void L3GD20_Init(void);
+
+// This function makes printf work
+int __io_putchar(int ch);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -76,10 +76,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  x_values = circular_buffer_new(MOVING_AVG_BUFFER_SIZE);
-  y_values = circular_buffer_new(MOVING_AVG_BUFFER_SIZE);
-  z_values = circular_buffer_new(MOVING_AVG_BUFFER_SIZE);
-  const uint8_t *message = "Hello there";
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -113,17 +109,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  printf("Program started.\r\n");
   while (1)
   {
-    HAL_UART_Transmit(&huart2, message, strlen(message), HAL_MAX_DELAY);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   // Cleanup
-  circular_buffer_free(x_values);
-  circular_buffer_free(y_values);
-  circular_buffer_free(z_values);
   /* USER CODE END 3 */
 }
 
@@ -402,6 +395,10 @@ static void L3GD20_Init(void) {
   L3GD20_WriteRegister(L3GD20_CTRL_REG5_ADDR, 16);
 }
 
+int __io_putchar(int ch) {
+    HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+    return ch;
+}
 /* USER CODE END 4 */
 
 /**
