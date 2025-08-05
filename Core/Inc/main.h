@@ -50,10 +50,15 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LSM303AGR_DRDY_Pin GPIO_PIN_2
+#define LSM303AGR_DRDY_GPIO_Port GPIOE
+#define LSM303AGR_DRDY_EXTI_IRQn EXTI2_IRQn
 #define L3GD20_CS_Pin GPIO_PIN_3
 #define L3GD20_CS_GPIO_Port GPIOE
 #define GREEN_LED_Pin GPIO_PIN_12
 #define GREEN_LED_GPIO_Port GPIOD
+#define LED_ORANGE_Pin GPIO_PIN_13
+#define LED_ORANGE_GPIO_Port GPIOD
 #define RED_LED_Pin GPIO_PIN_14
 #define RED_LED_GPIO_Port GPIOD
 #define BLUE_LED_Pin GPIO_PIN_15
